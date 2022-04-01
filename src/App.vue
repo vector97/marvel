@@ -1,19 +1,19 @@
 <template>
   <div id="app">
-    <app-header />
+    <app-header :changeSearch="changeSearch"/>
 
     <div class="container">
       <h1 class="pt-3 pb-3">Персонажи Marvel</h1>
 
-      <app-modal :character = "characters[characterIndex]"/>
+      <app-modal :character = "searchCharacters[characterIndex]"/>
 
-      <spinner />
+      <spinner v-if="loading" />
 
       <div class="row">
 
         <div
           class="card mb-3 col-sm-12 col-md-6 col-lg-4"
-          v-for="(el, idx) in characters"
+          v-for="(el, idx) in searchCharacters"
           :key="el.id"
         >
           <div class="row g-0">
@@ -66,6 +66,7 @@ export default {
       loading: false,
       characters: [],
       characterIndex: 0,
+      search: ''
     };
   },
   methods: {
@@ -73,12 +74,24 @@ export default {
       return fetch('https://netology-api-marvel.herokuapp.com/characters')
         .then(res => res.json())
         .then(json => this.characters = json)
+    },
+    changeSearch: function (value) {
+      this.search = value
     }
   },
-  computed: {},
-  mounted() {
-    this.fetchCharacters()
+  computed: {
+    searchCharacters: function() {
+      const {search, characters} = this
+      return characters.filter(character => {
+        return character.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
+      })
+    }
   },
+  async mounted() {
+    this.loading = true
+    await this.fetchCharacters()
+    this.loading = false
+  }
 };
 </script>
 

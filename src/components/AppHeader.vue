@@ -9,6 +9,8 @@
           type="search"
           placeholder="Поиск..."
           aria-label="Search"
+          v-model="search"
+          @input="changeSearch(search)"
         />
 
         <button class="btn btn-outline-light" type="submit">все</button>
@@ -20,8 +22,11 @@
 <script>
 export default {
   name: "AppHeader",
+  props: ['changeSearch'],
   data() {
-    return {};
+    return {
+      search: '',
+    };
   },
 };
 </script>
